@@ -52,7 +52,8 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
-            implementation("io.ktor:ktor-client-logging:2.3.10")
+            implementation(libs.ktor.client.logging.v2310)
+           // implementation(libs.androidx.core.ktx)
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)

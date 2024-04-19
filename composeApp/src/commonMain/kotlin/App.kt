@@ -24,7 +24,7 @@ fun App() {
 
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color =  MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "splash") {

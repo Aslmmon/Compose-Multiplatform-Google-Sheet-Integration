@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -39,7 +41,6 @@ fun GoogleSheetReaderTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
 
     MaterialTheme(
         colorScheme = colorScheme,

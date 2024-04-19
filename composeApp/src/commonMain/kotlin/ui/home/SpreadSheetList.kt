@@ -16,16 +16,13 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.AddCircleOutline
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -69,7 +66,7 @@ fun SpreadSheetList(
                     FloatingActionButton(onClick = {
                         viewModel.setSheetList(response,0)
                         navigateToPostScreen.invoke()
-                    }, backgroundColor =  androidx.compose.material3.MaterialTheme.colorScheme.primary) {
+                    }, containerColor =  androidx.compose.material3.MaterialTheme.colorScheme.primary) {
                         Icon(imageVector = Icons.Default.Person, contentDescription = "add", tint = Color.White)
                     }
                 },
