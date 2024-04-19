@@ -1,7 +1,5 @@
 package com.upwork.googlesheetreader.ui.details
 
-import PlatformQrCode
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,8 +14,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Build
-import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.DoneOutline
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.runtime.Composable
@@ -37,7 +33,6 @@ import com.upwork.googlesheetreader.ui.postData.PlayerData
 import com.upwork.googlesheetreader.ui.postData.components.LoaderIndicator
 import com.upwork.googlesheetreader.ui.postData.components.MinimalDialog
 import com.upwork.googlesheetreader.ui.postData.components.QRcodePlayer
-import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import ui.ViewModelGoogleSheet
 import ui.ViewModelGoogleSheet.HomeUiState
 
@@ -127,29 +122,35 @@ fun SpreadSheetDetails(
                                         fontFamily = FontFamily.Serif
                                     )
 
-                                    if (item.size > 4) {
-                                        if (item[4] == "FALSE") {
-                                            Icon(
-                                                Icons.Rounded.ErrorOutline,
-                                                contentDescription = "",
-                                                tint = Color.Red,
-                                                modifier = modifier
-                                                    .size(30.dp)
-                                                    .weight(0.5f)
-                                            )
-                                        } else {
-                                            Icon(
-                                                Icons.Rounded.DoneOutline,
-                                                contentDescription = "",
-                                                tint = Color.Green,
-                                                modifier = modifier
-                                                    .size(30.dp)
-                                                    .weight(0.5f)
-                                            )
-                                        }
-                                    }
+//                                    if (item.size > 4) {
+//                                        if (item[4] == "FALSE") {
+//                                            Icon(
+//                                                Icons.Rounded.ErrorOutline,
+//                                                contentDescription = "",
+//                                                tint = Color.Red,
+//                                                modifier = modifier
+//                                                    .size(30.dp)
+//                                                    .weight(0.5f)
+//                                            )
+//                                        } else {
+//                                            Icon(
+//                                                Icons.Rounded.DoneOutline,
+//                                                contentDescription = "",
+//                                                tint = Color.Green,
+//                                                modifier = modifier
+//                                                    .size(30.dp)
+//                                                    .weight(0.5f)
+//                                            )
+//                                        }
+//                                    }
                                 }
-                                QRcodePlayer(modifier=modifier.size(50.dp),data = arrayOf(item[0],item[1],item[2],item[3]))
+                                QRcodePlayer(
+                                    modifier = modifier.size(50.dp), data = try {
+                                        arrayOf(item[0], item[1], item[2], item[3])
+                                    } catch (e: Exception) {
+                                        arrayOf(item[0])
+                                    }
+                                )
 
                             }
                             Divider(Modifier.height(1.dp))

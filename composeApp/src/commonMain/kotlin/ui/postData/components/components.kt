@@ -154,12 +154,18 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
 
                 QRcodePlayer(
                     modifier = Modifier.size(400.dp),
-                    data = arrayOf(
-                        playerData.firstName,
-                        playerData.secondName,
-                        playerData.age,
-                        playerData.position
-                    )
+                    data = try {
+                        arrayOf(
+                            playerData.firstName,
+                            playerData.secondName,
+                            playerData.age,
+                            playerData.position
+                        )
+                    }catch (e:Exception){
+                        arrayOf(
+                            playerData.firstName
+                        )
+                    }
                 )
                 Text(
                     text = playerData.firstName + " " + playerData.secondName,
@@ -167,7 +173,7 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
                     fontSize = 22.sp
                 )
                 if (playerData.age.isNotEmpty()) Text(
-                    text = "Age : " + playerData.age,
+                    text = "Jersey : " + playerData.age,
                     fontWeight = FontWeight.Bold
                 )
                 if (playerData.position.isNotEmpty()) Text(
@@ -191,10 +197,13 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
 }
 
 @Composable
-fun QRcodePlayer(modifier: Modifier,vararg data: String) {
+fun QRcodePlayer(modifier: Modifier, vararg data: String) {
     Image(
         modifier = modifier,
-        painter = rememberQrCodePainter(data.toString()),
+        painter = rememberQrCodePainter(
+            data.toString()
+
+        ),
         contentDescription = "QR code referring to the playerData"
     )
 }
