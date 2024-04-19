@@ -9,14 +9,15 @@ import androidx.lifecycle.viewModelScope
 import com.upwork.googlesheetreader.network.model.spreadsheet.Properties
 import com.upwork.googlesheetreader.network.model.spreadsheet.Sheet
 import com.upwork.googlesheetreader.ui.postData.PlayerData
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ui.network.KtorComponent
 
 class ViewModelGoogleSheet : ViewModel() {
-//    private var retrofitMoviesNetworkApi = RetrofitMoviesNetworkApi
-private val ktorComponent = KtorComponent()
+    //    private var retrofitMoviesNetworkApi = RetrofitMoviesNetworkApi
+    private val ktorComponent = KtorComponent()
 
     private var _homeUiState: MutableStateFlow<HomeUiState?> =
         MutableStateFlow(null)
@@ -38,14 +39,13 @@ private val ktorComponent = KtorComponent()
     }
 
 
-
     fun getSpreadsheet() {
         viewModelScope.launch {
             _homeUiState.update {
                 HomeUiState.Loading()
             }
             try {
-                 val data = ktorComponent.getSpreadsheetData()
+                val data = ktorComponent.getSpreadsheetData()
                 _homeUiState.update {
                     HomeUiState.Success(data.sheets)
 
@@ -100,16 +100,15 @@ private val ktorComponent = KtorComponent()
         viewModelScope.launch {
 
             try {
-//                retrofitMoviesNetworkApi.postDataToSpreadSheet(
-//                    playerData.spreadSheetName,
-//                    playerData.firstName,
-//                    playerData.secondName,
-//                    playerData.age,
-//                    playerData.position
-//                )
-                _homeUiState.update {
-                    HomeUiState.SuccessSubmitPost()
+                val response = ktorComponent.postDataToSpreadSheet(
+                    playerData
+                )
+                if (response.status == HttpStatusCode.Found) {
+                    _homeUiState.update {
+                        HomeUiState.SuccessSubmitPost()
+                    }
                 }
+
             } catch (e: Exception) {
                 _homeUiState.update {
                     HomeUiState.Error(e.message.toString())

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.upwork.googlesheetreader.ui.postData.components.ExposedDropdownMenuBoxItem
 import com.upwork.googlesheetreader.ui.postData.components.LoaderIndicator
 import com.upwork.googlesheetreader.ui.postData.components.SimpleOutlinedTextFieldSample
+import kotlinx.serialization.Serializable
 import ui.ViewModelGoogleSheet
 import ui.ViewModelGoogleSheet.HomeUiState
 
@@ -125,6 +126,7 @@ fun PostDataScreen(modifier: Modifier, viewModel: ViewModelGoogleSheet) {
 }
 
 
+@Serializable
 data class PlayerData(
     var spreadSheetName: String = "",
     var firstName: String = "",

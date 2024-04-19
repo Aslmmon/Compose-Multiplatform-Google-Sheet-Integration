@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.compose.qr.code)
             implementation(libs.ktor.client.android)
 
+//            implementation ("io.ktor:ktor-client-logging-jvm:1.9.23")
 
         }
         commonMain.dependencies {
@@ -51,6 +52,7 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
+            implementation("io.ktor:ktor-client-logging:2.3.10")
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
@@ -59,6 +61,8 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+//            implementation ("io.ktor:ktor-client-logging-native:1.9.23")
+
         }
     }
 }
