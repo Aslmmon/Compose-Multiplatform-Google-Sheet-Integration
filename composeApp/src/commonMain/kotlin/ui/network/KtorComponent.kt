@@ -8,8 +8,9 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.upwork.googlesheetkmp.BuildKonfig
 
-const val API_KEY = "AIzaSyD8rAG-D7tTFCJfJiO7JFMUc_fHD7e58QQ"
+val API_KEY = BuildKonfig.GOOGLE_API_KEY
 const val BASE_URL = "https://sheets.googleapis.com"
 const val SHEET_ID = "1SMrpeJC2isCTJotRYXBDNENNbDVzCcazonOOwUQ-Vf0"
 
@@ -25,6 +26,7 @@ class KtorComponent {
     }
 
     suspend fun getSpreadsheetData(): SpreadSheetResponse {
+        //var data =
         val spreadSheetResponse: SpreadSheetResponse =
             httpClient.get("${BASE_URL}/v4/spreadsheets/${SHEET_ID}?fields=sheets(properties(title))&key=${API_KEY}")
                 .body()

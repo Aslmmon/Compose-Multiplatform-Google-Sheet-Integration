@@ -1,12 +1,13 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     kotlin("plugin.serialization") version "1.9.23"
-
+    id("com.codingfeline.buildkonfig") version "+"
 }
+
 
 kotlin {
     androidTarget {
@@ -98,5 +99,15 @@ android {
 dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.tools.core)
 }
 
+
+buildkonfig {
+    packageName = "org.upwork.googlesheetkmp"
+
+    defaultConfigs {
+        buildConfigField(FieldSpec.Type.STRING, "GOOGLE_API_KEY", "AIzaSyD8rAG-D7tTFCJfJiO7JFMUc_fHD7e58QQ")
+    }
+
+}

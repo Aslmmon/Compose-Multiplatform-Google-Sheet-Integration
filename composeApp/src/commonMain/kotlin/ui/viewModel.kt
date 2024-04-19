@@ -22,9 +22,6 @@ private val ktorComponent = KtorComponent()
         MutableStateFlow(null)
     val homeUiState: MutableStateFlow<HomeUiState?> get() = _homeUiState
 
-    private val _initApiCalled = mutableStateOf(false)
-    val initApiCalled: State<Boolean> = _initApiCalled
-
     private val _data = mutableStateOf("")
     val data: State<String> = _data
 
@@ -40,13 +37,7 @@ private val ktorComponent = KtorComponent()
         _sheetList.value = Pair(newData, index)
     }
 
-    fun setInitApiCalled(isInit: Boolean) {
-        _initApiCalled.value = isInit
-    }
 
-    init {
-        //  getSpreadsheet()
-    }
 
     fun getSpreadsheet() {
         viewModelScope.launch {
@@ -55,13 +46,6 @@ private val ktorComponent = KtorComponent()
             }
             try {
                  val data = ktorComponent.getSpreadsheetData()
-//                val data = mutableStateListOf(
-//                    Sheet(Properties("test1")),
-//                    Sheet(Properties("test1")),
-//                    Sheet(Properties("test1")),
-//                    Sheet(Properties("test1"))
-//                )
-
                 _homeUiState.update {
                     HomeUiState.Success(data.sheets)
 
