@@ -145,11 +145,9 @@ fun SpreadSheetDetails(
 //                                    }
                                 }
                                 QRcodePlayer(
-                                    modifier = modifier.size(50.dp), data = try {
+                                    modifier = modifier.size(50.dp), data =
                                         arrayOf(item[0], item[1], item[2], item[3])
-                                    } catch (e: Exception) {
-                                        arrayOf(item[0])
-                                    }
+
                                 )
 
                             }

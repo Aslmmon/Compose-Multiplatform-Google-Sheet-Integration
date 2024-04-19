@@ -154,18 +154,13 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
 
                 QRcodePlayer(
                     modifier = Modifier.size(400.dp),
-                    data = try {
+                    data =
                         arrayOf(
                             playerData.firstName,
                             playerData.secondName,
                             playerData.age,
                             playerData.position
                         )
-                    }catch (e:Exception){
-                        arrayOf(
-                            playerData.firstName
-                        )
-                    }
                 )
                 Text(
                     text = playerData.firstName + " " + playerData.secondName,
