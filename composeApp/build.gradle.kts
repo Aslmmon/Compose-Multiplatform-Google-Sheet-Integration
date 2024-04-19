@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    kotlin("plugin.serialization") version "1.9.23"
+
 }
 
 kotlin {
@@ -25,7 +27,8 @@ kotlin {
             isStatic = true
         }
     }
-    
+
+
     sourceSets {
         
         androidMain.dependencies {
@@ -33,6 +36,8 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation (libs.androidx.material.icons.extended)
             implementation(libs.compose.qr.code)
+            implementation(libs.ktor.client.android)
+
 
         }
         commonMain.dependencies {
@@ -46,7 +51,13 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
 
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
     }
 }

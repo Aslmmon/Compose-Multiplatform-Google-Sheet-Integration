@@ -12,9 +12,11 @@ import com.upwork.googlesheetreader.ui.postData.PlayerData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ui.network.KtorComponent
 
 class ViewModelGoogleSheet : ViewModel() {
 //    private var retrofitMoviesNetworkApi = RetrofitMoviesNetworkApi
+private val ktorComponent = KtorComponent()
 
     private var _homeUiState: MutableStateFlow<HomeUiState?> =
         MutableStateFlow(null)
@@ -52,16 +54,16 @@ class ViewModelGoogleSheet : ViewModel() {
                 HomeUiState.Loading()
             }
             try {
-                // val data = retrofitMoviesNetworkApi.getSpreadSheetData()
-                val data = mutableStateListOf(
-                    Sheet(Properties("test1")),
-                    Sheet(Properties("test1")),
-                    Sheet(Properties("test1")),
-                    Sheet(Properties("test1"))
-                )
+                 val data = ktorComponent.getSpreadsheetData()
+//                val data = mutableStateListOf(
+//                    Sheet(Properties("test1")),
+//                    Sheet(Properties("test1")),
+//                    Sheet(Properties("test1")),
+//                    Sheet(Properties("test1"))
+//                )
 
                 _homeUiState.update {
-                    HomeUiState.Success(data)
+                    HomeUiState.Success(data.sheets)
 
                 }
             } catch (e: Exception) {
@@ -83,14 +85,16 @@ class ViewModelGoogleSheet : ViewModel() {
             }
             try {
                 //    val data = retrofitMoviesNetworkApi.getSpreadSheetDataDetails(sheetName)
-                val data = mutableStateListOf(
-                    mutableStateListOf("test 1"),
-                    mutableStateListOf("test 2"),
-                    mutableStateListOf("test 3")
-                )
+                val data = ktorComponent.getSpreadsheetDataDetails(sheetName)
+
+//
+//                val data = mutableStateListOf(
+//                    mutableStateListOf("test 1"),
+//                    mutableStateListOf("test 2"),
+//                    mutableStateListOf("test 3")
+//                )
                 _homeUiState.update {
-                 //   HomeUiState.Details(data.values)
-                    HomeUiState.Details(data)
+                    HomeUiState.Details(data.values)
 
                 }
             } catch (e: Exception) {
