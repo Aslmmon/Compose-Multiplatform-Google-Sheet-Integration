@@ -1,6 +1,7 @@
 package com.upwork.googlesheetreader.ui.details
 
 import PlatformQrCode
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import com.upwork.googlesheetreader.ui.postData.PlayerData
 import com.upwork.googlesheetreader.ui.postData.components.LoaderIndicator
 import com.upwork.googlesheetreader.ui.postData.components.MinimalDialog
+import com.upwork.googlesheetreader.ui.postData.components.QRcodePlayer
+import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import ui.ViewModelGoogleSheet
 import ui.ViewModelGoogleSheet.HomeUiState
 
@@ -146,12 +149,8 @@ fun SpreadSheetDetails(
                                         }
                                     }
                                 }
-//                                QrCodeView(
-//                                    data = item[0],
-//                                    modifier = Modifier
-//                                        .size(50.dp)
-//                                )
-                                PlatformQrCode(data=item[0],modifier=Modifier.size(50.dp))
+                                QRcodePlayer(modifier=modifier.size(50.dp),data = arrayOf(item[0],item[1],item[2],item[3]))
+
                             }
                             Divider(Modifier.height(1.dp))
                         }
