@@ -23,10 +23,14 @@ class ViewModelGoogleSheet : ViewModel() {
         MutableStateFlow(null)
     val homeUiState: MutableStateFlow<HomeUiState?> get() = _homeUiState
 
+
+    private var _EditState: MutableStateFlow<EditUIState?> =
+        MutableStateFlow(null)
+    val EditState: MutableStateFlow<EditUIState?> get() = _EditState
+
     private val _data = mutableStateOf("")
     val data: State<String> = _data
 
-    val pair = Pair(emptyList<Sheet>(), 0)
     private val _sheetList = mutableStateOf(Pair(emptyList<Sheet>(), 0))
     val sheetList: MutableState<Pair<List<Sheet>, Int>> = _sheetList
 
@@ -119,6 +123,36 @@ class ViewModelGoogleSheet : ViewModel() {
 
     }
 
+    suspend fun editIsShootStatus(playerData: PlayerData) {
+
+        _EditState.update {
+            EditUIState.Loading()
+        }
+        viewModelScope.launch {
+
+            try {
+                val response = ktorComponent.editPlayerShootStatus(
+                    playerData
+                )
+
+                if (response.status == HttpStatusCode.Found) {
+                    _EditState.update {
+                        EditUIState.SuccessSubmitPost()
+                    }
+                    getSpreadsheetDetails(playerData.spreadSheetName)
+
+                }
+
+            } catch (e: Exception) {
+                _EditState.update {
+                    EditUIState.Error(e.message.toString())
+                }
+            }
+        }
+
+
+    }
+
 
     sealed class HomeUiState {
         data class Success(val data: List<Sheet>) : HomeUiState()
@@ -127,6 +161,12 @@ class ViewModelGoogleSheet : ViewModel() {
         data class Error(val message: String) : HomeUiState()
         class Loading : HomeUiState()
 
+    }
+
+    sealed class EditUIState {
+        class SuccessSubmitPost : EditUIState()
+        data class Error(val message: String) : EditUIState()
+        class Loading : EditUIState()
 
     }
 

@@ -133,7 +133,7 @@ data class PlayerData(
     var secondName: String = "",
     var age: String = "",
     var position: String = "",
-    var isCaptured: String = "",
-    var other: String = ""
+    var isCaptured: String = "FALSE",
+    var other: String = "",
 
 )

@@ -17,6 +17,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -30,9 +31,10 @@ const val BASE_URL_GoogleSheet = "https://script.google.com"
 
 const val SHEET_ID = "1SMrpeJC2isCTJotRYXBDNENNbDVzCcazonOOwUQ-Vf0"
 const val SHEET_ID_GoogleSheet =
-    "AKfycbzZLwVZ90eI-5gVZYZO74GAjK7v5y07ZzGhiqIBqF6bK2Va4812aoHil3c6I5OQTYy2"
+    "AKfycbyNq9KMdhh2hebpl7IERNOAvmEovRzMYsMYIi237L5H7MOag0NbnXP_Kd4Ry4gihPNL"
 
 class KtorComponent {
+
     private val httpClient = HttpClient {
 
         install(ContentNegotiation) {
@@ -43,7 +45,7 @@ class KtorComponent {
             })
         }
         install(Logging) {
-            logger = object: Logger {
+            logger = object : Logger {
                 override fun log(message: String) {
                     print("HTTP Client  " + message)
                 }
@@ -77,56 +79,42 @@ class KtorComponent {
     }
 
     suspend fun postDataToSpreadSheet(playerData: PlayerData): HttpResponse {
-
         with(playerData) {
-//            val response: HttpResponse = httpClient.post(
-//                "${BASE_URL_GoogleSheet}/macros/s/${SHEET_ID_GoogleSheet}/exec?spreadhsheetName=${spreadSheetName}" +
-//                        "&playerFirstName=$firstName" +
-//                        "&playerSecondName=$secondName" +
-//                        "&age=${age}" +
-//                        "&position=${position}"
-//            ) {
-//                contentType(ContentType.Application.Json)
-//                setBody(playerData)
-//
-//            }
-//            httpClient.get("https://ktor.io") {
-//                url {
-//                    parameters.append("token", "abc123")
-//                }
-//            }
             val response: HttpResponse = httpClient.post(
                 "${BASE_URL_GoogleSheet}/macros/s/${SHEET_ID_GoogleSheet}/exec"
             ) {
-                url{
+                url {
+                    parameters.append("action", "add")
                     parameters.append("spreadsheetName", spreadSheetName)
-                    parameters.append("playerFirstName", firstName)
-                    parameters.append("playerSecondName", secondName)
-                    parameters.append("age", age)
-                    parameters.append("position", position)
+                    parameters.append("playerFirstName", firstName.trim())
+                    parameters.append("playerSecondName", secondName.trim())
+                    parameters.append("age", age.trim())
+                    parameters.append("position", position.trim())
+                    parameters.append("isShoot", "FALSE")
 
                 }
-//                contentType(ContentType.Application.Json)
-//                setBody(playerData)
-
             }
             print(response.toString())
             return response
-
-
         }
-
-
     }
-//    @POST(value = "/macros/s/AKfycbzZLwVZ90eI-5gVZYZO74GAjK7v5y07ZzGhiqIBqF6bK2Va4812aoHil3c6I5OQTYy2/exec")
-//    suspend fun postDataToSpreadSheet(
-//        @Query("spreadsheetName") spreadsheetName: String,
-//        @Query("playerFirstName") playerFirstName: String,
-//        @Query("playerSecondName") playerSecondName: String,
-//        @Query("age") age: String,
-//        @Query("position") position: String
-//
-//    ): retrofit2.Call<Unit>
+
+    suspend fun editPlayerShootStatus(playerData: PlayerData): HttpResponse {
+        with(playerData) {
+            val response: HttpResponse = httpClient.post(
+                "${BASE_URL_GoogleSheet}/macros/s/${SHEET_ID_GoogleSheet}/exec"
+            ) {
+                url {
+                    parameters.append("action", "edit")
+                    parameters.append("spreadsheetName", spreadSheetName)
+                    parameters.append("playerFirstName", firstName)
+                    parameters.append("isShoot", isCaptured)
+                }
+            }
+            print(response.toString())
+            return response
+        }
+    }
 
 
 }
