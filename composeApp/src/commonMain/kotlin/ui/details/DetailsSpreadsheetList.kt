@@ -11,10 +11,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Colors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.CandlestickChart
+import androidx.compose.material.icons.filled.ChangeCircle
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.rounded.Cancel
+import androidx.compose.material.icons.rounded.ChangeCircle
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.DoneOutline
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.runtime.Composable
@@ -24,17 +35,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.upwork.googlesheetreader.ui.postData.PlayerData
+import com.upwork.googlesheetreader.ui.postData.components.AlertDialogExample
 import com.upwork.googlesheetreader.ui.postData.components.LoaderIndicator
 import com.upwork.googlesheetreader.ui.postData.components.MinimalDialog
 import com.upwork.googlesheetreader.ui.postData.components.QRcodePlayer
+import com.upwork.googlesheetreader.ui.theme.greenColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import ui.ViewModelGoogleSheet
@@ -48,9 +63,8 @@ fun SpreadSheetDetails(
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     val editUIState by viewModel.EditState.collectAsState()
-
     val openAlertDialog = remember { mutableStateOf(false) }
-    val isShootStatusChanged = remember { mutableStateOf(false) }
+    val openDialogChangeStatus = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     val playerData by remember {
@@ -97,13 +111,20 @@ fun SpreadSheetDetails(
                                     modifier = modifier
                                         .fillMaxWidth()
                                         .clickable {
-                                            updatePlayerData(playerData, item,item[4])
+                                            try {
+                                                updatePlayerData(playerData, item, item[4])
+                                            }catch (e:Exception){
+
+                                                updatePlayerData(playerData, item, "FALSE")
+
+                                            }
                                             openAlertDialog.value = true
                                         }
                                         .padding(5.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Row(modifier = modifier.weight(1f)) {
+                                    Row(modifier = modifier.weight(1f),
+                                        verticalAlignment = Alignment.CenterVertically) {
 
                                         Text(
                                             modifier = modifier
@@ -123,34 +144,41 @@ fun SpreadSheetDetails(
                                         if (item.size > 4) {
                                             if (item[4].contains("FALSE", true)) {
                                                 Icon(
-                                                    Icons.Rounded.ErrorOutline,
+                                                    Icons.Rounded.Cancel,
                                                     contentDescription = "",
                                                     tint = Color.Red,
                                                     modifier = modifier
                                                         .size(30.dp)
                                                         .weight(0.5f).clickable {
-                                                            updatePlayerData(playerData, item,"TRUE")
-                                                            coroutineScope.launch {
-                                                                viewModel.editIsShootStatus(
-                                                                    playerData
-                                                                )
-                                                            }
+                                                            updatePlayerData(
+                                                                playerData,
+                                                                item,
+                                                                "TRUE"
+                                                            )
+                                                            openDialogChangeStatus.value = true
+
                                                         }
                                                 )
                                             } else {
                                                 Icon(
-                                                    Icons.Rounded.DoneOutline,
+                                                    Icons.Rounded.CheckCircle,
                                                     contentDescription = "",
-                                                    tint = Color.Green,
+                                                    tint = Color.DarkGray,
                                                     modifier = modifier
                                                         .size(30.dp)
                                                         .weight(0.5f).clickable {
-                                                            updatePlayerData(playerData, item,"FALSE")
-                                                            coroutineScope.launch {
-                                                                viewModel.editIsShootStatus(
-                                                                    playerData
-                                                                )
-                                                            }
+                                                            updatePlayerData(
+                                                                playerData,
+                                                                item,
+                                                                "FALSE"
+                                                            )
+                                                            openDialogChangeStatus.value = true
+//
+//                                                            coroutineScope.launch {
+//                                                                viewModel.editIsShootStatus(
+//                                                                    playerData
+//                                                                )
+//                                                            }
 
                                                         }
                                                 )
@@ -168,14 +196,16 @@ fun SpreadSheetDetails(
                             }
                         }
 
-                        when(editUIState){
-                            is EditUIState.Loading->{
+                        when (editUIState) {
+                            is EditUIState.Loading -> {
                                 LoaderIndicator(modifier)
                             }
-                            is EditUIState.SuccessSubmitPost->{
+
+                            is EditUIState.SuccessSubmitPost -> {
 
                             }
-                            else->{}
+
+                            else -> {}
                         }
                     }
                 }
@@ -191,12 +221,34 @@ fun SpreadSheetDetails(
 
         false -> {}
     }
+    when (openDialogChangeStatus.value) {
+        true -> AlertDialogExample(
+            onDismissRequest = {
+                openDialogChangeStatus.value = false
+            },
+            onConfirmation = {
+                openDialogChangeStatus.value = false
+                coroutineScope.launch {
+                    viewModel.editIsShootStatus(
+                        playerData
+                    )
+                }
+
+            },
+            dialogText = "Are you sure want to change Shooting Status of Roster ",
+            dialogTitle = "",
+            icon = Icons.Rounded.ChangeCircle
+        )
+
+        false -> {}
+    }
 
 }
 
 private fun updatePlayerData(
     playerData: PlayerData,
-    item: List<String>,isCapturedValue:String
+    item: List<String>,
+    isCapturedValue: String
 ) {
     with(playerData) {
         try {
