@@ -1,6 +1,5 @@
 package com.upwork.googlesheetreader.ui.postData.components
 
-import PlatformQrCode
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -199,8 +198,7 @@ fun QRcodePlayer(modifier: Modifier, vararg data: String) {
     Image(
         modifier = modifier,
         painter = rememberQrCodePainter(
-            data.toString()
-
+            data.joinToString()
         ),
         contentDescription = "QR code referring to the playerData"
     )

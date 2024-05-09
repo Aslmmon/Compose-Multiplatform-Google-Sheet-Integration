@@ -2,15 +2,19 @@ package ui
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.upwork.googlesheetreader.network.model.spreadsheet.Properties
 import com.upwork.googlesheetreader.network.model.spreadsheet.Sheet
+import com.upwork.googlesheetreader.network.model.spreadsheetDetails.SpreadSheetDetails
 import com.upwork.googlesheetreader.ui.postData.PlayerData
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ui.network.KtorComponent
@@ -18,6 +22,14 @@ import ui.network.KtorComponent
 class ViewModelGoogleSheet : ViewModel() {
     //    private var retrofitMoviesNetworkApi = RetrofitMoviesNetworkApi
     private val ktorComponent = KtorComponent()
+
+    val text = MutableStateFlow("")
+    val dbText = text.debounce(300)
+        .distinctUntilChanged()
+        .flatMapLatest {
+            filterSpreadSheetDetails(it)
+        }
+
 
     private var _homeUiState: MutableStateFlow<HomeUiState?> =
         MutableStateFlow(null)
@@ -41,6 +53,8 @@ class ViewModelGoogleSheet : ViewModel() {
     fun setSheetList(newData: List<Sheet>, index: Int) {
         _sheetList.value = Pair(newData, index)
     }
+
+    lateinit var dataList: SpreadSheetDetails
 
 
     fun getSpreadsheet() {
@@ -72,17 +86,9 @@ class ViewModelGoogleSheet : ViewModel() {
                 HomeUiState.Loading()
             }
             try {
-                //    val data = retrofitMoviesNetworkApi.getSpreadSheetDataDetails(sheetName)
-                val data = ktorComponent.getSpreadsheetDataDetails(sheetName)
-
-//
-//                val data = mutableStateListOf(
-//                    mutableStateListOf("test 1"),
-//                    mutableStateListOf("test 2"),
-//                    mutableStateListOf("test 3")
-//                )
+                dataList = ktorComponent.getSpreadsheetDataDetails(sheetName)
                 _homeUiState.update {
-                    HomeUiState.Details(data.values)
+                    HomeUiState.Details(dataList.values)
 
                 }
             } catch (e: Exception) {
@@ -95,6 +101,33 @@ class ViewModelGoogleSheet : ViewModel() {
 
     }
 
+
+    fun filterSpreadSheetDetails(playerName: String): Flow<String> {
+        print("total players ${dataList.values}")
+
+
+        val filterdList = dataList.values.filter {
+            val completeName = it.get(0) + it.get(1)
+            completeName.contains(playerName, ignoreCase = true)
+        }
+        print("filterd list  $filterdList")
+        print(filterdList.toString())
+
+        viewModelScope.launch {
+            try {
+                _homeUiState.update {
+                    HomeUiState.Details(filterdList)
+                }
+            } catch (e: Exception) {
+                _homeUiState.update {
+                    HomeUiState.Error(e.message.toString())
+                }
+            }
+        }
+        return flow { }
+
+
+    }
 
     suspend fun postDataToSpreadSheet(playerData: PlayerData) {
 

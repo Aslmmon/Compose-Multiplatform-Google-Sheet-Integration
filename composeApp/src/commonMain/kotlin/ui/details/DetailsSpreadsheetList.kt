@@ -14,20 +14,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Colors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Autorenew
-import androidx.compose.material.icons.filled.CandlestickChart
-import androidx.compose.material.icons.filled.ChangeCircle
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.ChangeCircle
 import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Done
-import androidx.compose.material.icons.rounded.DoneOutline
-import androidx.compose.material.icons.rounded.ErrorOutline
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,10 +30,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,8 +46,6 @@ import com.upwork.googlesheetreader.ui.postData.components.AlertDialogExample
 import com.upwork.googlesheetreader.ui.postData.components.LoaderIndicator
 import com.upwork.googlesheetreader.ui.postData.components.MinimalDialog
 import com.upwork.googlesheetreader.ui.postData.components.QRcodePlayer
-import com.upwork.googlesheetreader.ui.theme.greenColor
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import ui.ViewModelGoogleSheet
 import ui.ViewModelGoogleSheet.*
@@ -66,6 +61,8 @@ fun SpreadSheetDetails(
     val openAlertDialog = remember { mutableStateOf(false) }
     val openDialogChangeStatus = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val text by viewModel.text.collectAsState("")
+    val dbText by viewModel.dbText.collectAsState("")
 
     val playerData by remember {
         mutableStateOf(
@@ -76,6 +73,7 @@ fun SpreadSheetDetails(
     LaunchedEffect(Unit) {
         viewModel.getSpreadsheetDetails(viewModel.data.value)
         playerData.spreadSheetName = viewModel.data.value
+        viewModel.text.value =""
     }
 
 
@@ -88,9 +86,8 @@ fun SpreadSheetDetails(
 
         is HomeUiState.Details -> {
             val response = (homeUiState as HomeUiState.Details).data
-            if (response.isEmpty()) {
-                Text(text = "empty Data")
-            } else
+//            val text by viewModel.text.collectAsState("")
+//            val dbText by viewModel.dbText.collectAsState("")
 
                 Column(modifier = modifier.padding(vertical = 15.dp, horizontal = 5.dp)) {
                     Text(
@@ -101,10 +98,29 @@ fun SpreadSheetDetails(
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily.Serif
                     )
+
+
+                    OutlinedTextField(
+                        modifier=modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                        value = text,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            textColor = Color.Black,
+                            focusedBorderColor = Color.Black,
+                            unfocusedBorderColor = Color.Black),
+                        onValueChange = {
+                            viewModel.text.value = (it)
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Serif
+                        ),
+                        label = { Text("Search here ", color = Color.Black) }
+                    )
                     Box {
                         LazyColumn(
                             modifier = modifier,
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
                         ) {
                             items(response) { item ->
                                 Row(
