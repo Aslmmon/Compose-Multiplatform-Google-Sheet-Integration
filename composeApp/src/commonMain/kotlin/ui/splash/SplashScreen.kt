@@ -21,17 +21,18 @@ fun SplashScreen(modifier: Modifier, navigateToHome: () -> Unit) {
         delay(3000L)
         navigateToHome.invoke()
     }
-   // HideSystemBars()
+    // HideSystemBars()
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        Image(painter = painterResource(Res.drawable.logo_splash),
+        Image(
+            painter = painterResource(Res.drawable.logo_splash),
             contentDescription = "",
-            modifier=modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop)
+            modifier = modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
     }
 }
-
 
 
 //@Composable

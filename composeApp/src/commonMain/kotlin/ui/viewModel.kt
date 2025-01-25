@@ -9,6 +9,7 @@ import com.upwork.googlesheetreader.network.model.spreadsheet.Sheet
 import com.upwork.googlesheetreader.network.model.spreadsheetDetails.SpreadSheetDetails
 import com.upwork.googlesheetreader.ui.postData.PlayerData
 import io.ktor.http.HttpStatusCode
+import io.ktor.util.logging.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ui.network.KtorComponent
+
 
 class ViewModelGoogleSheet : ViewModel() {
     //    private var retrofitMoviesNetworkApi = RetrofitMoviesNetworkApi
@@ -54,7 +56,7 @@ class ViewModelGoogleSheet : ViewModel() {
         _sheetList.value = Pair(newData, index)
     }
 
-    lateinit var dataList: SpreadSheetDetails
+    var dataList: SpreadSheetDetails = SpreadSheetDetails()
 
 
     fun getSpreadsheet() {
@@ -87,6 +89,8 @@ class ViewModelGoogleSheet : ViewModel() {
             }
             try {
                 dataList = ktorComponent.getSpreadsheetDataDetails(sheetName)
+
+
                 _homeUiState.update {
                     HomeUiState.Details(dataList.values)
 
@@ -101,10 +105,8 @@ class ViewModelGoogleSheet : ViewModel() {
 
     }
 
-
     fun filterSpreadSheetDetails(playerName: String): Flow<String> {
         print("total players ${dataList.values}")
-
 
         val filterdList = dataList.values.filter {
             val completeName = it.get(0) + it.get(1)
@@ -164,6 +166,7 @@ class ViewModelGoogleSheet : ViewModel() {
         viewModelScope.launch {
 
             try {
+                println(playerData.toString())
                 val response = ktorComponent.editPlayerShootStatus(
                     playerData
                 )

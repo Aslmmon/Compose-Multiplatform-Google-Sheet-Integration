@@ -13,7 +13,7 @@ import com.upwork.googlesheetreader.ui.splash.SplashScreen
 import com.upwork.googlesheetreader.ui.theme.GoogleSheetReaderTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ui.ViewModelGoogleSheet
-
+import ui.search.SearchScreen
 
 
 @Composable
@@ -24,7 +24,7 @@ fun App() {
 
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color =  MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "splash") {
@@ -35,7 +35,10 @@ fun App() {
                             navController.navigate("spreadsheetDetails")
                         }, navigateToPostScreen = {
                             navController.navigate("postScreen")
-                        }, viewModel = viewModel
+                        }, viewModel = viewModel,
+                        navigateToSearchScreen = {
+                            navController.navigate("searchScreen")
+                        }
                     )
 
                 }
@@ -45,7 +48,7 @@ fun App() {
                     }, viewModel = viewModel)
                 }
                 composable("postScreen") {
-                    PostDataScreen(modifier = Modifier,viewModel= viewModel)
+                    PostDataScreen(modifier = Modifier, viewModel = viewModel)
                 }
 
                 composable("splash") {
@@ -54,6 +57,13 @@ fun App() {
                             navController.popBackStack()
                         }
                     })
+                }
+
+
+                composable("searchScreen") {
+                    SearchScreen(
+                        viewModel = viewModel,
+                    )
                 }
 
             }

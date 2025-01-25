@@ -128,10 +128,10 @@ fun SpreadSheetDetails(
                                         .fillMaxWidth()
                                         .clickable {
                                             try {
-                                                updatePlayerData(playerData, item, item[4])
+                                            //    updatePlayerData(playerData, item, item[4])
                                             }catch (e:Exception){
 
-                                                updatePlayerData(playerData, item, "FALSE")
+                                               // updatePlayerData(playerData, item, "FALSE")
 
                                             }
                                             openAlertDialog.value = true

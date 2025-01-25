@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -20,7 +21,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.Composable
@@ -45,7 +48,8 @@ fun SpreadSheetList(
     modifier: Modifier,
     viewModel: ViewModelGoogleSheet,
     onNavigateToDetails: () -> Unit,
-    navigateToPostScreen: () -> Unit
+    navigateToPostScreen: () -> Unit,
+    navigateToSearchScreen: () -> Unit
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
 
@@ -63,12 +67,42 @@ fun SpreadSheetList(
             val response = (homeUiState as HomeUiState.Success).data
             Scaffold(
                 floatingActionButton = {
-                    FloatingActionButton(onClick = {
-                        viewModel.setSheetList(response,0)
-                        navigateToPostScreen.invoke()
-                    }, containerColor =  androidx.compose.material3.MaterialTheme.colorScheme.primary) {
-                        Icon(imageVector = Icons.Default.Person, contentDescription = "add", tint = Color.White)
+                    Box(modifier = Modifier.padding(16.dp)) {
+
+                        FloatingActionButton(
+                            onClick = {
+                                viewModel.setSheetList(response, 0)
+                                navigateToPostScreen.invoke()
+                            },
+                            containerColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "add",
+                                tint = Color.White
+                            )
+                        }
+
+                        // Top FAB (offset to be above the bottom FAB)
+                        FloatingActionButton(
+
+                            onClick = {
+                                navigateToSearchScreen.invoke()
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .offset(y = (-72).dp),
+                            containerColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
+// Adjust the offset as needed
+                        ) {
+                            Icon(
+                                Icons.Filled.Search,
+                                contentDescription = "Search",
+                                tint = Color.White
+                            )
+                        }
                     }
+
                 },
                 modifier = Modifier
                     .fillMaxSize()
@@ -81,7 +115,10 @@ fun SpreadSheetList(
                         .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(modifier = modifier.padding(vertical = 15.dp, horizontal = 5.dp).fillMaxHeight()) {
+                    Column(
+                        modifier = modifier.padding(vertical = 15.dp, horizontal = 5.dp)
+                            .fillMaxHeight()
+                    ) {
                         Text(
                             text = "Sheets Available",
                             modifier = modifier
@@ -120,7 +157,7 @@ fun SpreadSheetList(
                                         Icons.Rounded.AddCircleOutline,
                                         contentDescription = "",
                                         modifier = modifier.size(30.dp).clickable {
-                                            viewModel.setSheetList(response,index)
+                                            viewModel.setSheetList(response, index)
                                             navigateToPostScreen.invoke()
                                         }
                                     )

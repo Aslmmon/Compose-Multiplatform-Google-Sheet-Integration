@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SpreadSheetDetails(
     @SerialName("majorDimension")
-    val majorDimension: String,
+    val majorDimension: String="",
     @SerialName("range")
-    val range: String,
+    val range: String="",
     @SerialName("values")
-    val values: List<List<String>>
+    val values: List<List<String>> = mutableListOf()
 )

@@ -63,7 +63,6 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-//            implementation ("io.ktor:ktor-client-logging-native:1.9.23")
 
         }
     }
