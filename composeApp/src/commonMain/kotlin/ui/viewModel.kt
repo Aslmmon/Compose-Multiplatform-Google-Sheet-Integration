@@ -9,9 +9,10 @@ import com.upwork.googlesheetreader.network.model.spreadsheet.Sheet
 import com.upwork.googlesheetreader.network.model.spreadsheetDetails.SpreadSheetDetails
 import com.upwork.googlesheetreader.ui.postData.PlayerData
 import io.ktor.http.HttpStatusCode
-import io.ktor.util.logging.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -58,11 +59,11 @@ class ViewModelGoogleSheet : ViewModel() {
 
     var dataList: SpreadSheetDetails = SpreadSheetDetails()
 
-
     fun getSpreadsheet() {
         viewModelScope.launch {
             _homeUiState.update {
                 HomeUiState.Loading()
+
             }
             try {
                 val data = ktorComponent.getSpreadsheetData()
@@ -130,6 +131,7 @@ class ViewModelGoogleSheet : ViewModel() {
 
 
     }
+
 
     suspend fun postDataToSpreadSheet(playerData: PlayerData) {
 
@@ -205,5 +207,9 @@ class ViewModelGoogleSheet : ViewModel() {
         class Loading : EditUIState()
 
     }
+
+
+
+
 
 }

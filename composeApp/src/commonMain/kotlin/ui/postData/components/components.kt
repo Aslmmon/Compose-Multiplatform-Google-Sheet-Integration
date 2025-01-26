@@ -1,6 +1,5 @@
 package com.upwork.googlesheetreader.ui.postData.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.upwork.googlesheetreader.network.model.spreadsheet.Sheet
 import com.upwork.googlesheetreader.ui.postData.PlayerData
-import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import ui.utils.QRcodePlayer
 
 
 @Composable
@@ -121,7 +120,7 @@ fun ExposedDropdownMenuBoxItem(
 }
 
 @Composable
-fun LoaderIndicator(modifier: Modifier) {
+fun LoaderIndicator(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -153,16 +152,15 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-
                 QRcodePlayer(
                     modifier = Modifier.size(400.dp),
                     data =
-                        arrayOf(
-                            playerData.firstName,
-                            playerData.secondName,
-                            playerData.age,
-                            playerData.position
-                        )
+                    arrayOf(
+                        playerData.firstName,
+                        playerData.secondName,
+                        playerData.age,
+                        playerData.position
+                    )
                 )
                 Text(
                     text = playerData.firstName + " " + playerData.secondName,
@@ -193,16 +191,6 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
     }
 }
 
-@Composable
-fun QRcodePlayer(modifier: Modifier, vararg data: String) {
-    Image(
-        modifier = modifier,
-        painter = rememberQrCodePainter(
-            data.joinToString()
-        ),
-        contentDescription = "QR code referring to the playerData"
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

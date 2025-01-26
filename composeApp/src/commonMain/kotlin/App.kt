@@ -14,12 +14,15 @@ import com.upwork.googlesheetreader.ui.theme.GoogleSheetReaderTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ui.ViewModelGoogleSheet
 import ui.search.SearchScreen
+import ui.search.SearchViewModel
 
 
 @Composable
 @Preview
 fun App() {
     val viewModel = ViewModelGoogleSheet()
+    val searchViewModel = SearchViewModel()
+
     GoogleSheetReaderTheme {
 
         Surface(
@@ -62,7 +65,7 @@ fun App() {
 
                 composable("searchScreen") {
                     SearchScreen(
-                        viewModel = viewModel,
+                        viewModel = searchViewModel,
                     )
                 }
 
