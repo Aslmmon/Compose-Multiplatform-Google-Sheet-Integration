@@ -69,7 +69,7 @@ fun SpreadSheetDetails(
     LaunchedEffect(Unit) {
         viewModel.getSpreadsheetDetails(viewModel.data.value)
         playerData.spreadSheetName = viewModel.data.value
-        viewModel.text.value =""
+        viewModel.text.value = ""
     }
 
 
@@ -85,106 +85,109 @@ fun SpreadSheetDetails(
 //            val text by viewModel.text.collectAsState("")
 //            val dbText by viewModel.dbText.collectAsState("")
 
-                Column(modifier = modifier.padding(vertical = 15.dp, horizontal = 5.dp)) {
-                    Text(
-                        text = viewModel.data.value,
-                        modifier = modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
+            Column(modifier = modifier.padding(vertical = 15.dp, horizontal = 5.dp)) {
+                Text(
+                    text = viewModel.data.value,
+                    modifier = modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Serif
+                )
+
+
+                OutlinedTextField(
+                    modifier = modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                    value = text,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = Color.Black,
+                        focusedBorderColor = Color.Black,
+                        unfocusedBorderColor = Color.Black
+                    ),
+                    onValueChange = {
+                        viewModel.text.value = (it)
+                    },
+                    textStyle = TextStyle(
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily.Serif
-                    )
-
-
-                    OutlinedTextField(
-                        modifier=modifier.fillMaxWidth().padding(horizontal = 10.dp),
-                        value = text,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = Color.Black,
-                            focusedBorderColor = Color.Black,
-                            unfocusedBorderColor = Color.Black),
-                        onValueChange = {
-                            viewModel.text.value = (it)
-                        },
-                        textStyle = TextStyle(
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Serif
-                        ),
-                        label = { Text("Search here ", color = Color.Black) }
-                    )
-                    Box {
-                        LazyColumn(
-                            modifier = modifier,
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
-                        ) {
-                            items(response) { item ->
-                                Row(
-                                    modifier = modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            try {
+                    ),
+                    label = { Text("Search here ", color = Color.Black) }
+                )
+                Box {
+                    LazyColumn(
+                        modifier = modifier,
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        items(response) { item ->
+                            Row(
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        try {
                                             //    updatePlayerData(playerData, item, item[4])
-                                            }catch (e:Exception){
+                                        } catch (e: Exception) {
 
-                                               // updatePlayerData(playerData, item, "FALSE")
+                                            // updatePlayerData(playerData, item, "FALSE")
 
-                                            }
-                                            openAlertDialog.value = true
                                         }
-                                        .padding(5.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                        openAlertDialog.value = true
+                                    }
+                                    .padding(5.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    modifier = modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Row(modifier = modifier.weight(1f),
-                                        verticalAlignment = Alignment.CenterVertically) {
 
-                                        Text(
-                                            modifier = modifier
-                                                .weight(0.5f)
-                                                .padding(vertical = 10.dp, horizontal = 5.dp),
-                                            text = try {
+                                    Text(
+                                        modifier = modifier
+                                            .weight(0.5f)
+                                            .padding(vertical = 10.dp, horizontal = 5.dp),
+                                        text = try {
 
-                                                item[0] + " " + item[1]
-                                            } catch (e: Exception) {
-                                                "exception"
-                                            },
-                                            fontSize = 18.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            fontFamily = FontFamily.Serif
-                                        )
+                                            item[0] + " " + item[1]
+                                        } catch (e: Exception) {
+                                            "exception"
+                                        },
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = FontFamily.Serif
+                                    )
 
-                                        if (item.size > 4) {
-                                            if (item[4].contains("FALSE", true)) {
-                                                Icon(
-                                                    Icons.Rounded.Cancel,
-                                                    contentDescription = "",
-                                                    tint = Color.Red,
-                                                    modifier = modifier
-                                                        .size(30.dp)
-                                                        .weight(0.5f).clickable {
-                                                            updatePlayerData(
-                                                                playerData,
-                                                                item,
-                                                                "TRUE"
-                                                            )
-                                                            openDialogChangeStatus.value = true
+                                    if (item.size > 4) {
+                                        if (item[4].contains("FALSE", true)) {
+                                            Icon(
+                                                Icons.Rounded.Cancel,
+                                                contentDescription = "",
+                                                tint = Color.Red,
+                                                modifier = modifier
+                                                    .size(30.dp)
+                                                    .weight(0.5f).clickable {
+                                                        updatePlayerData(
+                                                            playerData,
+                                                            item,
+                                                            "TRUE"
+                                                        )
+                                                        openDialogChangeStatus.value = true
 
-                                                        }
-                                                )
-                                            } else {
-                                                Icon(
-                                                    Icons.Rounded.CheckCircle,
-                                                    contentDescription = "",
-                                                    tint = Color.DarkGray,
-                                                    modifier = modifier
-                                                        .size(30.dp)
-                                                        .weight(0.5f).clickable {
-                                                            updatePlayerData(
-                                                                playerData,
-                                                                item,
-                                                                "FALSE"
-                                                            )
-                                                            openDialogChangeStatus.value = true
+                                                    }
+                                            )
+                                        } else {
+                                            Icon(
+                                                Icons.Rounded.CheckCircle,
+                                                contentDescription = "",
+                                                tint = Color.DarkGray,
+                                                modifier = modifier
+                                                    .size(30.dp)
+                                                    .weight(0.5f).clickable {
+                                                        updatePlayerData(
+                                                            playerData,
+                                                            item,
+                                                            "FALSE"
+                                                        )
+                                                        openDialogChangeStatus.value = true
 //
 //                                                            coroutineScope.launch {
 //                                                                viewModel.editIsShootStatus(
@@ -192,35 +195,35 @@ fun SpreadSheetDetails(
 //                                                                )
 //                                                            }
 
-                                                        }
-                                                )
-                                            }
+                                                    }
+                                            )
                                         }
                                     }
-                                    QRcodePlayer(
-                                        modifier = modifier.size(50.dp), data =
-                                        arrayOf(item[0], item[1], item[2], item[3])
-
-                                    )
-
                                 }
-                                Divider(Modifier.height(1.dp))
-                            }
-                        }
+                                QRcodePlayer(
+                                    modifier = modifier.size(50.dp), data =
+                                    arrayOf(item[0], item[1], item[2], item[3])
 
-                        when (editUIState) {
-                            is EditUIState.Loading -> {
-                                LoaderIndicator(modifier)
-                            }
-
-                            is EditUIState.SuccessSubmitPost -> {
+                                )
 
                             }
-
-                            else -> {}
+                            Divider(Modifier.height(1.dp))
                         }
                     }
+
+                    when (editUIState) {
+                        is EditUIState.Loading -> {
+                            LoaderIndicator(modifier)
+                        }
+
+                        is EditUIState.SuccessSubmitPost -> {
+
+                        }
+
+                        else -> {}
+                    }
                 }
+            }
         }
 
         else -> {}

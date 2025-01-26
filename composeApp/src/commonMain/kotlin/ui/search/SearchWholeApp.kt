@@ -1,11 +1,15 @@
 package ui.search
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.Colors
 import androidx.compose.material.TabRowDefaults.Divider
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -14,34 +18,35 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.upwork.googlesheetreader.ui.postData.PlayerData
 import com.upwork.googlesheetreader.ui.postData.components.LoaderIndicator
+import com.upwork.googlesheetreader.ui.postData.components.MinimalDialog
 import kotlinx.coroutines.delay
-import ui.ViewModelGoogleSheet
 import ui.utils.PlayerDataRow
 
 @Composable
 fun SearchScreen(
+    modifier: Modifier,
     viewModel: SearchViewModel,
-
-    ) {
+) {
 
     val searchState by viewModel.searchState.collectAsState()
     val filteredPlayers by viewModel.filteredPlayers.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
+    val openAlertDialog = remember { mutableStateOf(false) }
+    var playerData = PlayerData()
 
     LaunchedEffect(Unit) {
         delay(3000)
-        viewModel.searchPlayer()
+        viewModel.getAllPlayersFromAllSheets()
     }
 
-
-
-    Column {
+    Column(
+        modifier = Modifier.background(color = Color.White)
+    ) {
         TextField(
             value = searchQuery,
             onValueChange = {
@@ -60,19 +65,28 @@ fun SearchScreen(
 
             is SearchViewModel.SearchState.Success -> {
 //                val result = (searchState as SearchViewModel.SearchState.Success).allPlayers
+
                 LazyColumn {
                     itemsIndexed(filteredPlayers) { index, item ->
+                        playerData = PlayerData(
+                            firstName = item.get(0),
+                            secondName = item.get(1),
+                            spreadSheetName = item.get(3),
+                            isCaptured = item.get(4)
+                        )
                         PlayerDataRow(
-                            modifier = Modifier.padding(5.dp),
-                            playerData = PlayerData(
-                                firstName = item.get(0),
-                                secondName = item.get(1),
-                                spreadSheetName = item.get(3),
-                                isCaptured = item.get(4)
-                            ),
+                            modifier = Modifier.padding(5.dp).clickable {
+                                openAlertDialog.value = true
+                            },
+                            playerData = playerData,
                             onStatusChange = { updatedPlayer, newStatus -> },
                             openDialogChangeStatus = {},
-                            qrCodeData = arrayOf(item.get(0), item.get(1), item.get(2), item.get(3))
+                            qrCodeData = arrayOf(
+                                item.get(0),
+                                item.get(1),
+                                item.get(2),
+                                item.get(3)
+                            )
                         )
                         Divider(
                             modifier = Modifier.fillMaxWidth(),
@@ -80,6 +94,13 @@ fun SearchScreen(
                             color = Color.LightGray
                         )
                     }
+                }
+                when (openAlertDialog.value) {
+                    true -> MinimalDialog(onDismissRequest = {
+                        openAlertDialog.value = false
+                    }, playerData)
+
+                    false -> {}
                 }
 
             }
@@ -90,6 +111,7 @@ fun SearchScreen(
             }
 
         }
+
     }
 
 

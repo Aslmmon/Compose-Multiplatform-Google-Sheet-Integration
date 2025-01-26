@@ -65,6 +65,7 @@ fun App() {
 
                 composable("searchScreen") {
                     SearchScreen(
+                        modifier = Modifier,
                         viewModel = searchViewModel,
                     )
                 }

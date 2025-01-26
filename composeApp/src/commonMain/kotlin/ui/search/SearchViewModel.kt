@@ -47,13 +47,13 @@ class SearchViewModel : ViewModel() {
         _searchQuery.value = query
     }
 
-    suspend fun searchPlayer() {
+    suspend fun getAllPlayersFromAllSheets() {
         _searchState.update {
             SearchState.Loading
         }
         viewModelScope.launch {
             try {
-                ktorComponent.getSpreadsheetDataWithDetails().collect() { (response, details) ->
+                ktorComponent.getSpreadsheetDataWithDetails().collect() { (_, details) ->
                     details.values.forEachIndexed { index, strings ->
                         allPlayers.add(strings)
                     }
