@@ -101,7 +101,7 @@ class SearchViewModel : ViewModel() {
     }
 
     private fun filterPlayers(query: String) {
-        val filteredList = allPlayers.filter { item ->
+        val filteredList = allPlayers.distinct().filter { item ->
             val firstName = item.getOrNull(0) ?: ""
             val secondName = item.getOrNull(1) ?: ""
             firstName.contains(query, ignoreCase = true) ||
