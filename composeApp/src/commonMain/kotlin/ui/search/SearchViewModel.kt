@@ -2,6 +2,7 @@ package ui.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.upwork.googlesheetreader.ui.postData.PlayerData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +34,10 @@ class SearchViewModel : ViewModel() {
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
 
+    private val _addPlayer = MutableStateFlow(PlayerData())
+    val addPlayer: StateFlow<PlayerData> = _addPlayer.asStateFlow()
+
+
     init {
         _searchQuery
             .debounce(500L) // Debounce for 500 milliseconds
@@ -47,7 +52,20 @@ class SearchViewModel : ViewModel() {
         _searchQuery.value = query
     }
 
+
+    fun updatePlayer(item: PlayerData) {
+        _addPlayer.update {
+            PlayerData(
+                firstName = item.firstName,
+                secondName = item.secondName,
+                spreadSheetName = item.spreadSheetName,
+                isCaptured = item.isCaptured, other = ""
+            )
+        }
+    }
+
     suspend fun getAllPlayersFromAllSheets() {
+        allPlayers.clear()
         _searchState.update {
             SearchState.Loading
         }

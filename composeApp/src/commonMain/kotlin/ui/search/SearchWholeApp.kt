@@ -25,6 +25,7 @@ import com.upwork.googlesheetreader.ui.postData.PlayerData
 import com.upwork.googlesheetreader.ui.postData.components.LoaderIndicator
 import com.upwork.googlesheetreader.ui.postData.components.MinimalDialog
 import kotlinx.coroutines.delay
+import ui.utils.Logger
 import ui.utils.PlayerDataRow
 
 @Composable
@@ -36,12 +37,19 @@ fun SearchScreen(
     val searchState by viewModel.searchState.collectAsState()
     val filteredPlayers by viewModel.filteredPlayers.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
-    val openAlertDialog = remember { mutableStateOf(false) }
-    var playerData = PlayerData()
+    val addPlayer by viewModel.addPlayer.collectAsState()
 
-    LaunchedEffect(Unit) {
+    val openAlertDialog = remember { mutableStateOf(false) }
+    val hasDataBeenFetched = remember { mutableStateOf(false) }
+
+    var playerData: PlayerData
+    var playerClicked: PlayerData? = null
+
+
+    LaunchedEffect(!hasDataBeenFetched.value) {
         delay(3000)
         viewModel.getAllPlayersFromAllSheets()
+        hasDataBeenFetched.value = true
     }
 
     Column(
@@ -74,13 +82,17 @@ fun SearchScreen(
                             spreadSheetName = item.get(3),
                             isCaptured = item.get(4)
                         )
+                      //  viewModel.updatePlayer(item)
                         PlayerDataRow(
-                            modifier = Modifier.padding(5.dp).clickable {
-                                openAlertDialog.value = true
-                            },
+                            modifier = Modifier.padding(5.dp),
                             playerData = playerData,
                             onStatusChange = { updatedPlayer, newStatus -> },
-                            openDialogChangeStatus = {},
+                            openDialogChangeStatus = { player ->
+                                viewModel.updatePlayer(player)
+                                openAlertDialog.value = true
+
+
+                            },
                             qrCodeData = arrayOf(
                                 item.get(0),
                                 item.get(1),
@@ -95,15 +107,11 @@ fun SearchScreen(
                         )
                     }
                 }
-                when (openAlertDialog.value) {
-                    true -> MinimalDialog(onDismissRequest = {
-                        openAlertDialog.value = false
-                    }, playerData)
 
-                    false -> {}
-                }
+
 
             }
+
 
             is SearchViewModel.SearchState.Error -> {
                 Text("Error")
@@ -112,7 +120,23 @@ fun SearchScreen(
 
         }
 
+
+        when (openAlertDialog.value) {
+
+            true -> {
+                Logger.e("player dialog", addPlayer.toString())
+
+                MinimalDialog(onDismissRequest = {
+                    openAlertDialog.value = false
+                }, addPlayer)
+
+            }
+
+            false -> {}
+        }
+
     }
+
 
 
 }

@@ -259,8 +259,7 @@ fun SpreadSheetDetails(
     }
 
 }
-
-private fun updatePlayerData(
+ fun updatePlayerData(
     playerData: PlayerData,
     item: List<String>,
     isCapturedValue: String

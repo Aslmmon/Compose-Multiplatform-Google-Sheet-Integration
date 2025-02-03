@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.upwork.googlesheetreader.ui.details.SpreadSheetDetails
 import com.upwork.googlesheetreader.ui.home.SpreadSheetList
 import com.upwork.googlesheetreader.ui.postData.PostDataScreen
+import com.upwork.googlesheetreader.ui.postData.components.MinimalDialog
 import com.upwork.googlesheetreader.ui.splash.SplashScreen
 import com.upwork.googlesheetreader.ui.theme.GoogleSheetReaderTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -69,6 +70,7 @@ fun App() {
                         viewModel = searchViewModel,
                     )
                 }
+
 
             }
         }

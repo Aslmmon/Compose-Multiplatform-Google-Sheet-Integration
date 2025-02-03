@@ -31,11 +31,13 @@ import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 fun PlayerDataRow(
     modifier: Modifier = Modifier, playerData: PlayerData,
     onStatusChange: (PlayerData, String) -> Unit,
-    openDialogChangeStatus: () -> Unit,
+    openDialogChangeStatus:   (playerData:PlayerData) -> Unit,
     qrCodeData: Array<String>,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            openDialogChangeStatus.invoke(playerData)
+        },
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {

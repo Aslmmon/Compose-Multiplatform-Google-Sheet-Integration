@@ -151,7 +151,7 @@ class KtorComponent {
             emit(spreadSheetResponse)
         }.flatMapConcat { response ->
             response.sheets.take(10).asFlow().map { sheet ->
-                delay(500)
+                delay(50)
                 val spreadSheetDetails = getSpreadsheetDataDetails(sheet.properties?.title ?: "")
                 Pair(response, spreadSheetDetails)
             }

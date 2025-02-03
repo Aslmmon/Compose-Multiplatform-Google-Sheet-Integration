@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.upwork.googlesheetreader.network.model.spreadsheet.Sheet
 import com.upwork.googlesheetreader.ui.postData.PlayerData
+import ui.utils.Logger
 import ui.utils.QRcodePlayer
 
 
@@ -183,6 +184,7 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
                     text = "other : " + playerData.other,
                     fontWeight = FontWeight.Bold
                 )
+                Logger.e("player",playerData.toString())
 
             }
 
