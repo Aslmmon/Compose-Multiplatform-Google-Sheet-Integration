@@ -24,7 +24,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.upwork.googlesheetkmp.BuildKonfig
 import ui.search.data.PlayerDataResponseItem
-import io.ktor.client.engine.cio.*
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -51,7 +50,7 @@ const val DeploymentGoogleSheetAppScriptID =
 
 class KtorComponent {
 
-    private val httpClient = HttpClient(CIO) {
+    private val httpClient = HttpClient {
 
         install(Logging) {
             logger = Logger.SIMPLE // Or Logger.DEFAULT

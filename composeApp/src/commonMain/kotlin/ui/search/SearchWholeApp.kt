@@ -38,19 +38,20 @@ fun SearchScreen(
     val filteredPlayers by viewModel.filteredPlayers.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val addPlayer by viewModel.addPlayer.collectAsState()
-
     val openAlertDialog = remember { mutableStateOf(false) }
     val hasDataBeenFetched = remember { mutableStateOf(false) }
 
     var playerData: PlayerData
-    var playerClicked: PlayerData? = null
 
 
     LaunchedEffect(!hasDataBeenFetched.value) {
         delay(3000)
         viewModel.getAllPlayersFromAllSheets()
         hasDataBeenFetched.value = true
+
     }
+    Logger.e("hasbeenFetched", hasDataBeenFetched.toString())
+
 
     Column(
         modifier = Modifier.background(color = Color.White)
@@ -124,7 +125,6 @@ fun SearchScreen(
         when (openAlertDialog.value) {
 
             true -> {
-                Logger.e("player dialog", addPlayer.toString())
 
                 MinimalDialog(onDismissRequest = {
                     openAlertDialog.value = false

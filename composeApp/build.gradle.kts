@@ -55,7 +55,6 @@ kotlin {
             implementation(libs.ktor.client.logging.v2310)
            // implementation(libs.androidx.core.ktx)
             implementation(libs.qrose.v101)
-            implementation(libs.ktor.client.cio)
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)

@@ -64,6 +64,14 @@ class SearchViewModel : ViewModel() {
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        clearSearchQuery()
+    }
+
+    private fun clearSearchQuery() {
+        _searchQuery.update { "" }
+    }
     suspend fun getAllPlayersFromAllSheets() {
         allPlayers.clear()
         _searchState.update {
