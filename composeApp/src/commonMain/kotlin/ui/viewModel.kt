@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.upwork.googlesheetreader.network.model.spreadsheet.Sheet
 import com.upwork.googlesheetreader.network.model.spreadsheetDetails.SpreadSheetDetails
 import com.upwork.googlesheetreader.ui.postData.PlayerData
+import io.ktor.client.call.body
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ui.network.KtorComponent
+import ui.utils.Logger
 
 
 class ViewModelGoogleSheet : ViewModel() {
@@ -48,6 +50,23 @@ class ViewModelGoogleSheet : ViewModel() {
 
     private val _sheetList = mutableStateOf(Pair(emptyList<Sheet>(), 0))
     val sheetList: MutableState<Pair<List<Sheet>, Int>> = _sheetList
+
+
+    private val _addPlayer = MutableStateFlow(PlayerData())
+    val addPlayer: StateFlow<PlayerData> = _addPlayer.asStateFlow()
+
+
+    fun updatePlayer(item: PlayerData) {
+        _addPlayer.update {
+            PlayerData(
+                firstName = item.firstName,
+                secondName = item.secondName,
+                spreadSheetName = item.spreadSheetName,
+                age = item.age,
+                isCaptured = item.isCaptured, other = ""
+            )
+        }
+    }
 
     fun setData(newData: String) {
         _data.value = newData
@@ -148,6 +167,12 @@ class ViewModelGoogleSheet : ViewModel() {
                     _homeUiState.update {
                         HomeUiState.SuccessSubmitPost()
                     }
+                }else{
+                    _homeUiState.update {
+                        HomeUiState.Error(response.status.value.toString() + " " + response.status.description)
+                    }
+                    Logger.e("  Error", response.status.value.toString() + " " + response.status.description)
+
                 }
 
             } catch (e: Exception) {
@@ -168,7 +193,7 @@ class ViewModelGoogleSheet : ViewModel() {
         viewModelScope.launch {
 
             try {
-                println(playerData.toString())
+                Logger.e("playerDetails Request", playerData.toString())
                 val response = ktorComponent.editPlayerShootStatus(
                     playerData
                 )
@@ -179,6 +204,13 @@ class ViewModelGoogleSheet : ViewModel() {
                     }
                     getSpreadsheetDetails(playerData.spreadSheetName)
 
+                } else {
+                    _EditState.update {
+                        EditUIState.Error(
+                            response.body<String>()
+                                .toString() + "\n error message " + response.status.value + " " + response.status.description
+                        )
+                    }
                 }
 
             } catch (e: Exception) {
@@ -207,9 +239,6 @@ class ViewModelGoogleSheet : ViewModel() {
         class Loading : EditUIState()
 
     }
-
-
-
 
 
 }

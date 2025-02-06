@@ -59,6 +59,7 @@ class SearchViewModel : ViewModel() {
                 firstName = item.firstName,
                 secondName = item.secondName,
                 spreadSheetName = item.spreadSheetName,
+                age = item.age,
                 isCaptured = item.isCaptured, other = ""
             )
         }
@@ -72,6 +73,7 @@ class SearchViewModel : ViewModel() {
     private fun clearSearchQuery() {
         _searchQuery.update { "" }
     }
+
     suspend fun getAllPlayersFromAllSheets() {
         allPlayers.clear()
         _searchState.update {

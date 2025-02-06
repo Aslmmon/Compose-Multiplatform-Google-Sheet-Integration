@@ -3,6 +3,7 @@ package com.upwork.googlesheetreader.ui.postData.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,11 +14,14 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -153,6 +157,22 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { onDismissRequest.invoke() }) {
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+
                 QRcodePlayer(
                     modifier = Modifier.size(400.dp),
                     data =
@@ -168,23 +188,36 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp
                 )
+
+                if (playerData.spreadSheetName.isNotEmpty()) Text(
+                    text = "Sheet Name : " + playerData.spreadSheetName,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
                 if (playerData.age.isNotEmpty()) Text(
                     text = "Jersey : " + playerData.age,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+
                 )
                 if (playerData.position.isNotEmpty()) Text(
                     text = "Position : " + playerData.position,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+
                 )
                 if (playerData.isCaptured.isNotEmpty()) Text(
                     text = "is photographed : " + playerData.isCaptured,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+
                 )
                 if (playerData.other.isNotEmpty()) Text(
                     text = "other : " + playerData.other,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+
                 )
-                Logger.e("player",playerData.toString())
 
             }
 
@@ -194,7 +227,6 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertDialogExample(
     onDismissRequest: () -> Unit,

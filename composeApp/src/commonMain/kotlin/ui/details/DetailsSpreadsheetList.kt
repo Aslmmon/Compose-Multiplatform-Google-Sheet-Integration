@@ -22,6 +22,7 @@ import androidx.compose.material.icons.rounded.ChangeCircle
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,7 @@ import kotlinx.coroutines.launch
 import ui.ViewModelGoogleSheet
 import ui.ViewModelGoogleSheet.EditUIState
 import ui.ViewModelGoogleSheet.HomeUiState
+import ui.utils.Logger
 import ui.utils.QRcodePlayer
 
 @Composable
@@ -58,17 +60,12 @@ fun SpreadSheetDetails(
     val openDialogChangeStatus = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val text by viewModel.text.collectAsState("")
-    val dbText by viewModel.dbText.collectAsState("")
+    val addPlayer by viewModel.addPlayer.collectAsState()
 
-    val playerData by remember {
-        mutableStateOf(
-            PlayerData()
-        )
-    }
+
 
     LaunchedEffect(Unit) {
         viewModel.getSpreadsheetDetails(viewModel.data.value)
-        playerData.spreadSheetName = viewModel.data.value
         viewModel.text.value = ""
     }
 
@@ -82,9 +79,6 @@ fun SpreadSheetDetails(
 
         is HomeUiState.Details -> {
             val response = (homeUiState as HomeUiState.Details).data
-//            val text by viewModel.text.collectAsState("")
-//            val dbText by viewModel.dbText.collectAsState("")
-
             Column(modifier = modifier.padding(vertical = 15.dp, horizontal = 5.dp)) {
                 Text(
                     text = viewModel.data.value,
@@ -115,101 +109,14 @@ fun SpreadSheetDetails(
                     label = { Text("Search here ", color = Color.Black) }
                 )
                 Box {
-                    LazyColumn(
-                        modifier = modifier,
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                    ) {
-                        items(response) { item ->
-                            Row(
-                                modifier = modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        try {
-                                            //    updatePlayerData(playerData, item, item[4])
-                                        } catch (e: Exception) {
 
-                                            // updatePlayerData(playerData, item, "FALSE")
-
-                                        }
-                                        openAlertDialog.value = true
-                                    }
-                                    .padding(5.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Row(
-                                    modifier = modifier.weight(1f),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-
-                                    Text(
-                                        modifier = modifier
-                                            .weight(0.5f)
-                                            .padding(vertical = 10.dp, horizontal = 5.dp),
-                                        text = try {
-
-                                            item[0] + " " + item[1]
-                                        } catch (e: Exception) {
-                                            "exception"
-                                        },
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        fontFamily = FontFamily.Serif
-                                    )
-
-                                    if (item.size > 4) {
-                                        if (item[4].contains("FALSE", true)) {
-                                            Icon(
-                                                Icons.Rounded.Cancel,
-                                                contentDescription = "",
-                                                tint = Color.Red,
-                                                modifier = modifier
-                                                    .size(30.dp)
-                                                    .weight(0.5f).clickable {
-                                                        updatePlayerData(
-                                                            playerData,
-                                                            item,
-                                                            "TRUE"
-                                                        )
-                                                        openDialogChangeStatus.value = true
-
-                                                    }
-                                            )
-                                        } else {
-                                            Icon(
-                                                Icons.Rounded.CheckCircle,
-                                                contentDescription = "",
-                                                tint = Color.DarkGray,
-                                                modifier = modifier
-                                                    .size(30.dp)
-                                                    .weight(0.5f).clickable {
-                                                        updatePlayerData(
-                                                            playerData,
-                                                            item,
-                                                            "FALSE"
-                                                        )
-                                                        openDialogChangeStatus.value = true
-//
-//                                                            coroutineScope.launch {
-//                                                                viewModel.editIsShootStatus(
-//                                                                    playerData
-//                                                                )
-//                                                            }
-
-                                                    }
-                                            )
-                                        }
-                                    }
-                                }
-                                QRcodePlayer(
-                                    modifier = modifier.size(50.dp), data =
-                                    arrayOf(item[0], item[1], item[2], item[3])
-
-                                )
-
-                            }
-                            Divider(Modifier.height(1.dp))
-                        }
-                    }
+                    PlayerList(
+                        response,
+                        viewModel = viewModel,
+                        modifier = Modifier,
+                        openAlertDialog=openAlertDialog,
+                        openDialogChangeStatus=openDialogChangeStatus,
+                    )
 
                     when (editUIState) {
                         is EditUIState.Loading -> {
@@ -218,6 +125,10 @@ fun SpreadSheetDetails(
 
                         is EditUIState.SuccessSubmitPost -> {
 
+                        }
+                        is  EditUIState.Error ->{
+                            val error = (editUIState as EditUIState.Error).message
+                            Logger.e("PlayerDetails Response", error.toString())
                         }
 
                         else -> {}
@@ -230,9 +141,13 @@ fun SpreadSheetDetails(
     }
 
     when (openAlertDialog.value) {
-        true -> MinimalDialog(onDismissRequest = {
-            openAlertDialog.value = false
-        }, playerData)
+        true -> {
+            Logger.e("playerDetails", addPlayer.toString())
+            MinimalDialog(onDismissRequest = {
+                openAlertDialog.value = false
+            }, addPlayer)
+
+        }
 
         false -> {}
     }
@@ -242,12 +157,12 @@ fun SpreadSheetDetails(
                 openDialogChangeStatus.value = false
             },
             onConfirmation = {
-                openDialogChangeStatus.value = false
                 coroutineScope.launch {
                     viewModel.editIsShootStatus(
-                        playerData
+                        addPlayer
                     )
                 }
+                openDialogChangeStatus.value = false
 
             },
             dialogText = "Are you sure want to change Shooting Status of Roster ",
@@ -259,21 +174,125 @@ fun SpreadSheetDetails(
     }
 
 }
- fun updatePlayerData(
-    playerData: PlayerData,
-    item: List<String>,
-    isCapturedValue: String
+
+@Composable
+fun PlayerList(
+    response: List<List<String>>,
+    modifier: Modifier = Modifier,
+    viewModel: ViewModelGoogleSheet,
+    openAlertDialog: MutableState<Boolean>,
+    openDialogChangeStatus: MutableState<Boolean>,
 ) {
-    with(playerData) {
-        try {
-            firstName = item[0]
-            secondName = item[1]
-            age = item[2]
-            position = item[3]
-            isCaptured = isCapturedValue
-            other = item[5]
-        } catch (e: Exception) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        items(
+            items = response,
+            key = { item -> item.hashCode() } // Use a unique key for each item
+        ) { item ->
+            // Extract data from the list only once
+            val player =
+                remember(item) { // Use remember to avoid recalculating on each recomposition
+                    try {
+                        PlayerData(
+                            firstName = item[0],
+                            secondName = item[1],
+                            age = item[2],
+                            spreadSheetName = item[3],
+                            isCaptured = item[4]
+                        )
+                    } catch (e: IndexOutOfBoundsException) {
+                        // Handle the case where the list doesn't have enough elements
+                        PlayerData(
+                            firstName = "N/A",
+                            secondName = "N/A",
+                            age = "N/A",
+                            spreadSheetName = "N/A",
+                            isCaptured = "N/A"
+                        )
+                    }
+                }
+
+            PlayerListItem(
+                player = player,
+                modifier = modifier,
+                viewModel = viewModel,
+                openAlertDialog = openAlertDialog,
+                openDialogChangeStatus = openDialogChangeStatus,
+                item = item,
+            )
+            Divider(Modifier.height(1.dp))
         }
     }
 }
+
+
+@Composable
+fun PlayerListItem(
+    player: PlayerData,
+    modifier: Modifier,
+    viewModel: ViewModelGoogleSheet,
+    openAlertDialog: MutableState<Boolean>,
+    openDialogChangeStatus: MutableState<Boolean>,
+    item: List<String>,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {
+                viewModel.updatePlayer(player)
+                openAlertDialog.value = true
+            }
+            .padding(5.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = modifier
+                    .weight(0.5f)
+                    .padding(vertical = 10.dp, horizontal = 5.dp),
+                text = "${player.firstName} ${player.secondName}", // Use string templates for cleaner code
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold, fontFamily = FontFamily.Serif
+            )
+            if (item.size > 4) {
+                val icon = if (player.isCaptured.equals("FALSE", ignoreCase = true)) {
+                    Icons.Rounded.Cancel
+                } else {
+                    Icons.Rounded.CheckCircle
+                }
+                val tint = if (player.isCaptured.equals("FALSE", ignoreCase = true)) {
+                    Color.Red
+                } else {
+                    Color.DarkGray
+                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = if (player.isCaptured.equals(
+                            "FALSE",
+                            ignoreCase = true
+                        )
+                    ) "Not Captured" else "Captured",
+                    tint = tint,
+                    modifier = modifier
+                        .size(30.dp)
+                        .weight(0.5f)
+                        .clickable {
+                            viewModel.updatePlayer(player)
+                            openDialogChangeStatus.value = true
+                        }
+                )
+            }
+        }
+        QRcodePlayer(
+            modifier = modifier.size(50.dp),
+            data = arrayOf(item[0], item[1], item[2], item[3])
+        )
+    }
+}
+
 

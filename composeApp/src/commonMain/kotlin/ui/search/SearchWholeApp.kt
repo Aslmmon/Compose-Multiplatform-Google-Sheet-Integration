@@ -80,6 +80,7 @@ fun SearchScreen(
                         playerData = PlayerData(
                             firstName = item.get(0),
                             secondName = item.get(1),
+                            age = item.get(2),
                             spreadSheetName = item.get(3),
                             isCaptured = item.get(4)
                         )

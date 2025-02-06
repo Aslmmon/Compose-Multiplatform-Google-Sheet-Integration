@@ -32,6 +32,8 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 
 
 /**
@@ -40,13 +42,12 @@ import kotlinx.coroutines.flow.map
 val API_KEY = BuildKonfig.GOOGLE_API_KEY
 const val BASE_URL = "https://sheets.googleapis.com"
 const val BASE_URL_GoogleSheet = "https://script.google.com"
-
 //https://script.google.com/macros/s/AKfycbzn5KmkOicmN8K3Sde_-i-PyRq4hBAEWXC8Joz0Bt4XwXk5toX7yNGnpGt6VVgLGn-y/exec
 const val SHEET_ID = "1SMrpeJC2isCTJotRYXBDNENNbDVzCcazonOOwUQ-Vf0"
 
 //const val DeploymentGoogleSheetAppScriptID = "AKfycbyNq9KMdhh2hebpl7IERNOAvmEovRzMYsMYIi237L5H7MOag0NbnXP_Kd4Ry4gihPNL"
 const val DeploymentGoogleSheetAppScriptID =
-    "AKfycbyO6siSZve0G57IVvjPZceqEgpsp1geM-7tYO6jbPhoT4Kw2HUBMVpoAlxFiylQFSqI"
+    "AKfycbzfH4PhlAoWjuLz6oPcsIUK7tGiIIeYwZbIqhrapMXMKy0Dm_lmBoGpqNgOMfwSDGCL"
 
 class KtorComponent {
 
@@ -160,20 +161,22 @@ class KtorComponent {
 
     suspend fun postDataToSpreadSheet(playerData: PlayerData): HttpResponse {
         with(playerData) {
+            val postData = PostData(
+                action = "add",
+                spreadsheetName = spreadSheetName,
+                playerFirstName = firstName.trim(),
+                playerSecondName = secondName.trim(),
+                age = age.trim(),
+                position = position.trim(),
+                isShoot = "FALSE"
+            )
             val response: HttpResponse = httpClient.post(
                 "${BASE_URL_GoogleSheet}/macros/s/${DeploymentGoogleSheetAppScriptID}/exec"
             ) {
-                url {
-                    parameters.append("action", "add")
-                    parameters.append("spreadsheetName", spreadSheetName)
-                    parameters.append("playerFirstName", firstName.trim())
-                    parameters.append("playerSecondName", secondName.trim())
-                    parameters.append("age", age.trim())
-                    parameters.append("position", position.trim())
-                    parameters.append("isShoot", "FALSE")
-
-                }
+                contentType(ContentType.Application.Json)
+                setBody(Json.encodeToString(postData))
             }
+            ui.utils.Logger.e("playerDetails Request", postData.toString())
             print(response.toString())
             return response
         }
@@ -181,19 +184,25 @@ class KtorComponent {
 
     suspend fun editPlayerShootStatus(playerData: PlayerData): HttpResponse {
         with(playerData) {
+            val editPostData = EditPostData(
+                action = "edit",
+                spreadsheetName = spreadSheetName,
+                playerFirstName = firstName.trim(),playerSecondName = secondName.trim(),
+                isShoot = "FALSE"
+            )
+            val jsonString = Json.encodeToString(editPostData)
+            println("JSON Request Body: $jsonString")
+
             val response: HttpResponse = httpClient.post(
                 "${BASE_URL_GoogleSheet}/macros/s/${DeploymentGoogleSheetAppScriptID}/exec"
             ) {
-                url {
-                    parameters.append("action", "edit")
-                    parameters.append("spreadsheetName", spreadSheetName)
-                    parameters.append("playerFirstName", firstName)
-                    parameters.append("playerSecondName", secondName)
-
-                    parameters.append("isShoot", isCaptured)
-                }
+                contentType(ContentType.Application.Json)
+                setBody(jsonString)
             }
-            print(response.toString())
+            println("Response: $response")
+            val responseBody: String = response.body()
+            println("Response Body: $responseBody")
+
             return response
         }
     }
@@ -203,3 +212,23 @@ class KtorComponent {
 
 @kotlinx.serialization.Serializable
 data class SearchRequest(val action: String, val searchString: String)
+
+
+@Serializable
+data class PostData(
+    val action: String,
+    val spreadsheetName: String,
+    val playerFirstName: String,
+    val playerSecondName: String,
+    val age: String,
+    val position: String,
+    val isShoot: String
+)
+
+@Serializable
+data class EditPostData(
+    val action: String,val spreadsheetName: String,
+    val playerFirstName: String,
+    val playerSecondName: String,
+    val isShoot: String
+)
