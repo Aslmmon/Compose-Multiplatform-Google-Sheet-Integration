@@ -42,6 +42,7 @@ import kotlinx.serialization.encodeToString
 val API_KEY = BuildKonfig.GOOGLE_API_KEY
 const val BASE_URL = "https://sheets.googleapis.com"
 const val BASE_URL_GoogleSheet = "https://script.google.com"
+
 //https://script.google.com/macros/s/AKfycbzn5KmkOicmN8K3Sde_-i-PyRq4hBAEWXC8Joz0Bt4XwXk5toX7yNGnpGt6VVgLGn-y/exec
 const val SHEET_ID = "1SMrpeJC2isCTJotRYXBDNENNbDVzCcazonOOwUQ-Vf0"
 
@@ -187,21 +188,16 @@ class KtorComponent {
             val editPostData = EditPostData(
                 action = "edit",
                 spreadsheetName = spreadSheetName,
-                playerFirstName = firstName.trim(),playerSecondName = secondName.trim(),
+                playerFirstName = firstName.trim(), playerSecondName = secondName.trim(),
                 isShoot = "FALSE"
             )
-            val jsonString = Json.encodeToString(editPostData)
-            println("JSON Request Body: $jsonString")
 
             val response: HttpResponse = httpClient.post(
                 "${BASE_URL_GoogleSheet}/macros/s/${DeploymentGoogleSheetAppScriptID}/exec"
             ) {
                 contentType(ContentType.Application.Json)
-                setBody(jsonString)
+                setBody(Json.encodeToString(editPostData))
             }
-            println("Response: $response")
-            val responseBody: String = response.body()
-            println("Response Body: $responseBody")
 
             return response
         }
@@ -227,7 +223,7 @@ data class PostData(
 
 @Serializable
 data class EditPostData(
-    val action: String,val spreadsheetName: String,
+    val action: String, val spreadsheetName: String,
     val playerFirstName: String,
     val playerSecondName: String,
     val isShoot: String
