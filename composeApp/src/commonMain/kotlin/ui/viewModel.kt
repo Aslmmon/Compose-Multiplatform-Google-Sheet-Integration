@@ -167,11 +167,14 @@ class ViewModelGoogleSheet : ViewModel() {
                     _homeUiState.update {
                         HomeUiState.SuccessSubmitPost()
                     }
-                }else{
+                } else {
                     _homeUiState.update {
                         HomeUiState.Error(response.status.value.toString() + " " + response.status.description)
                     }
-                    Logger.e("  Error", response.status.value.toString() + " " + response.status.description)
+                    Logger.e(
+                        "  Error",
+                        response.status.value.toString() + " " + response.status.description
+                    )
 
                 }
 
@@ -198,7 +201,7 @@ class ViewModelGoogleSheet : ViewModel() {
                     playerData
                 )
 
-                if (response.status == HttpStatusCode.Found) {
+                if (response.status == HttpStatusCode.MethodNotAllowed) {
                     _EditState.update {
                         EditUIState.SuccessSubmitPost()
                     }

@@ -25,6 +25,8 @@ import kotlinx.serialization.json.Json
 import org.upwork.googlesheetkmp.BuildKonfig
 import ui.search.data.PlayerDataResponseItem
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.append
+import io.ktor.http.headers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -48,7 +50,7 @@ const val SHEET_ID = "1SMrpeJC2isCTJotRYXBDNENNbDVzCcazonOOwUQ-Vf0"
 
 //const val DeploymentGoogleSheetAppScriptID = "AKfycbyNq9KMdhh2hebpl7IERNOAvmEovRzMYsMYIi237L5H7MOag0NbnXP_Kd4Ry4gihPNL"
 const val DeploymentGoogleSheetAppScriptID =
-    "AKfycbzfH4PhlAoWjuLz6oPcsIUK7tGiIIeYwZbIqhrapMXMKy0Dm_lmBoGpqNgOMfwSDGCL"
+    "AKfycbxMq0CxPin0BnKCFtagxN0QNUA_s7eHO_Ze40pe4XwPWj3eLeKMycjfE2jcr3SPeKDx"
 
 class KtorComponent {
 
@@ -70,8 +72,13 @@ class KtorComponent {
                 isLenient = true
                 ignoreUnknownKeys = true
             })
+            headers {
+                append(HttpHeaders.ContentType, ContentType.Application.Json)
+            }
 
         }
+
+
     }
 
 
@@ -189,7 +196,7 @@ class KtorComponent {
                 action = "edit",
                 spreadsheetName = spreadSheetName,
                 playerFirstName = firstName.trim(), playerSecondName = secondName.trim(),
-                isShoot = "FALSE"
+                isShoot = if (isCaptured== "TRUE") "FALSE" else "TRUE"
             )
 
             val response: HttpResponse = httpClient.post(
@@ -198,6 +205,8 @@ class KtorComponent {
                 contentType(ContentType.Application.Json)
                 setBody(Json.encodeToString(editPostData))
             }
+            ui.utils.Logger.e("playerDetails Request", Json.encodeToString(editPostData))
+            ui.utils.Logger.e("playerDetails headers", response.headers.toString())
 
             return response
         }

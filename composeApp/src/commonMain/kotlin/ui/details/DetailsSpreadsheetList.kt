@@ -189,7 +189,7 @@ fun PlayerList(
     ) {
         items(
             items = response,
-            key = { item -> item.hashCode() } // Use a unique key for each item
+//            key = { item -> item } // Use a unique key for each item
         ) { item ->
             // Extract data from the list only once
             val player =
