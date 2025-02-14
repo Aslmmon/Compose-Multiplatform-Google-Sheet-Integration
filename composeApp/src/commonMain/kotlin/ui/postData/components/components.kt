@@ -165,7 +165,7 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { onDismissRequest.invoke() }, modifier = Modifier.size(40.dp)) {
+                    IconButton(onClick = { onDismissRequest.invoke() }) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = "Back"

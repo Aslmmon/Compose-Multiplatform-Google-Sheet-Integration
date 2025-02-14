@@ -63,8 +63,7 @@ fun SpreadSheetDetails(
     val coroutineScope = rememberCoroutineScope()
     val text by viewModel.text.collectAsState("")
     val addPlayer by viewModel.addPlayer.collectAsState()
-
-
+    viewModel.dbText.collectAsState("")
 
     LaunchedEffect(Unit) {
         viewModel.getSpreadsheetDetails(viewModel.data.value)
@@ -94,7 +93,7 @@ fun SpreadSheetDetails(
                 Row(verticalAlignment = Alignment.CenterVertically) {
 
 
-                    IconButton(onClick = {navigateBack.invoke() }) {
+                    IconButton(onClick = { navigateBack.invoke() }) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = "Back"
@@ -126,8 +125,8 @@ fun SpreadSheetDetails(
                         response,
                         viewModel = viewModel,
                         modifier = Modifier,
-                        openAlertDialog=openAlertDialog,
-                        openDialogChangeStatus=openDialogChangeStatus,
+                        openAlertDialog = openAlertDialog,
+                        openDialogChangeStatus = openDialogChangeStatus,
                     )
 
                     when (editUIState) {
@@ -138,7 +137,8 @@ fun SpreadSheetDetails(
                         is EditUIState.SuccessSubmitPost -> {
 
                         }
-                        is  EditUIState.Error ->{
+
+                        is EditUIState.Error -> {
                             val error = (editUIState as EditUIState.Error).message
                             Logger.e("PlayerDetails Response", error.toString())
                         }
@@ -148,6 +148,7 @@ fun SpreadSheetDetails(
                 }
             }
         }
+
 
         else -> {}
     }
