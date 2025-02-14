@@ -13,10 +13,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.ChangeCircle
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -80,6 +82,7 @@ fun SpreadSheetDetails(
         is HomeUiState.Details -> {
             val response = (homeUiState as HomeUiState.Details).data
             Column(modifier = modifier.padding(vertical = 15.dp, horizontal = 5.dp)) {
+
                 Text(
                     text = viewModel.data.value,
                     modifier = modifier.fillMaxWidth(),
@@ -88,26 +91,35 @@ fun SpreadSheetDetails(
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Serif
                 )
+                Row(verticalAlignment = Alignment.CenterVertically) {
 
 
-                OutlinedTextField(
-                    modifier = modifier.fillMaxWidth().padding(horizontal = 10.dp),
-                    value = text,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = Color.Black,
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Black
-                    ),
-                    onValueChange = {
-                        viewModel.text.value = (it)
-                    },
-                    textStyle = TextStyle(
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Serif
-                    ),
-                    label = { Text("Search here ", color = Color.Black) }
-                )
+                    IconButton(onClick = {navigateBack.invoke() }) {
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+
+                    OutlinedTextField(
+                        modifier = modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                        value = text,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            textColor = Color.Black,
+                            focusedBorderColor = Color.Black,
+                            unfocusedBorderColor = Color.Black
+                        ),
+                        onValueChange = {
+                            viewModel.text.value = (it)
+                        },
+                        textStyle = TextStyle(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Serif
+                        ),
+                        label = { Text("Search here ", color = Color.Black) }
+                    )
+                }
                 Box {
 
                     PlayerList(

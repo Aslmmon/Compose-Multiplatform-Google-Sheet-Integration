@@ -165,7 +165,7 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { onDismissRequest.invoke() }) {
+                    IconButton(onClick = { onDismissRequest.invoke() }, modifier = Modifier.size(40.dp)) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = "Back"
@@ -174,7 +174,7 @@ fun MinimalDialog(onDismissRequest: () -> Unit, playerData: PlayerData) {
                 }
 
                 QRcodePlayer(
-                    modifier = Modifier.size(400.dp),
+                    modifier = Modifier.size(350.dp).padding(horizontal = 10.dp),
                     data =
                     arrayOf(
                         playerData.firstName,
